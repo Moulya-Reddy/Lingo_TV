@@ -1,1 +1,182 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lingo TV: zap between 60+ languages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0e1533;--tv:#f6a977;--tv2:#e08855;--glow:#9fe7ee;--lemon:#ffe9a8;--pink:#ee86ad;--fs:1.25rem;
+ --glyph:"Noto Sans","Noto Sans Devanagari","Noto Sans Bengali","Noto Sans Gurmukhi","Noto Sans Gujarati","Noto Sans Oriya","Noto Sans Tamil","Noto Sans Telugu","Noto Sans Kannada","Noto Sans Malayalam","Noto Sans Sinhala","Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Thai","Noto Sans Lao","Noto Sans Khmer","Noto Sans Myanmar","Noto Sans Georgian","Noto Sans Armenian","Noto Sans Ethiopic","Noto Sans Meetei Mayek","Noto Sans JP","Noto Sans SC","Noto Sans TC","Noto Sans KR","Nirmala UI","Leelawadee UI","Hiragino Sans","PingFang SC","Malgun Gothic","Geeza Pro",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#fdfdff;color:var(--ink);font:500 var(--fs)/1.5 Fredoka,system-ui,sans-serif;overflow-x:hidden}
+.g{font-family:var(--glyph)}
+:focus-visible{outline:4px solid var(--lemon);outline-offset:3px}
+button{font:inherit;cursor:pointer}
+#bg{position:fixed;inset:0;overflow:hidden;z-index:0}
+#bg span{position:absolute;font-family:var(--glyph);font-weight:700;line-height:1;opacity:.13;cursor:pointer;user-select:none;transition:opacity 1.2s,scale 1.2s;animation:drift var(--d) ease-in-out infinite alternate}
+#bg span:hover{opacity:.3;scale:1.08}
+#bg span.hot{opacity:.34;scale:1.12}
+@keyframes drift{to{transform:translate(var(--dx),var(--dy)) rotate(var(--r))}}
+@media (prefers-reduced-motion:reduce){#bg span{animation:none}}
+main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:16px 16px 70px;pointer-events:none}
+header,.studio,.row,.chips{pointer-events:none}
+.tv,.mid>*,.tools,.row>*,.chips>*,h1,.sub{pointer-events:auto}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:flex-end;margin-bottom:34px}
+h1{margin:0;font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700;line-height:1;letter-spacing:.01em;}
+h1 em{font-style:normal;color:var(--ink);background:var(--lemon);padding:0 .2em;border-radius:.2em;margin-left:.1em}
+.sub{margin:.4em 0 0;font-size:1rem;opacity:.9;max-width:34em}
+.tools{display:flex;gap:8px;align-items:center;font-size:1rem}
+.tools button{background:#fff;color:var(--ink);border:2px solid #cfd6ea;border-radius:12px;padding:6px 12px;min-width:44px;min-height:44px}
+.tools button[aria-pressed=true]{background:var(--lemon);color:var(--ink)}
+.studio{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center}
+.tv{position:relative;background:linear-gradient(160deg,var(--tv),var(--tv2));border-radius:34px;padding:14px 16px 20px;box-shadow:0 10px 0 #b9794f,0 24px 40px #1b2a5a2e}
+.tv::before,.tv::after{content:"";position:absolute;top:-44px;width:5px;height:56px;background:#b9c0d6;border-radius:4px;z-index:-1}
+.tv::before{left:40%;transform:rotate(-26deg)}.tv::after{left:52%;transform:rotate(26deg)}
+.cap{color:#2b1204;font-weight:700;font-size:1rem;margin:0 4px 6px}
+.bar{display:flex;gap:8px}
+.pick{flex:1;display:flex;align-items:center;gap:10px;background:#1a1208;color:var(--lemon);border:3px solid #000;border-radius:18px;padding:6px 12px;text-align:left;min-height:64px}
+.num{font-style:normal;font-size:.9rem;color:var(--glow);min-width:3.2em}
+.badge{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--lemon);color:var(--ink);font-size:1.6rem;flex:none;line-height:1}
+.nm{display:grid;line-height:1.15;flex:1;min-width:0}.nat{font-size:1.15rem;font-family:var(--glyph)}.eng{font-size:.85rem;opacity:.85;font-weight:500}
+.pick u{text-decoration:none;font-size:1.2rem}
+.ud{display:grid;gap:6px}.ud button{background:#1a1208;color:var(--glow);border:3px solid #000;border-radius:12px;width:48px;min-height:29px;line-height:1}
+.guide{position:absolute;left:12px;right:12px;top:98px;z-index:30;background:#fffbe9;color:var(--ink);border-radius:20px;padding:10px;box-shadow:0 24px 50px #000a;border:4px solid var(--ink)}
+.guide[hidden]{display:none}
+.find{width:100%;font:inherit;padding:10px 14px;border-radius:14px;border:3px solid var(--ink);margin-bottom:8px}
+.list{max-height:min(46vh,340px);overflow:auto}
+.grp{font-weight:700;font-size:.9rem;color:#8a3a10;padding:8px 6px 2px}
+.ch{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-radius:14px;padding:6px 8px;color:var(--ink);text-align:left;min-height:52px}
+.ch:hover,.ch:focus-visible{background:#ffe9a8}.ch.on{background:var(--lemon)}
+.ch i{font-style:normal;font-size:.85rem;opacity:.65;min-width:2em}.ch .g{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--lemon);font-size:1.2rem;flex:none;font-weight:700}
+.ch span{display:grid;line-height:1.15;font-family:var(--glyph)}.ch small{font-family:Fredoka,sans-serif;opacity:.7;font-size:.82rem}
+.screen{position:relative;margin-top:12px;background:#050d1c;border:9px solid #1a1208;border-radius:28px;box-shadow:inset 0 0 50px #7cf4ff44;overflow:hidden;min-height:260px}
+.screen::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#0000 0 2px,#0000002e 3px)}
+.screen textarea,.out{display:block;width:100%;min-height:260px;padding:16px 16px 34px;margin:0;border:0;background:none;color:#e9ffff;font:500 calc(var(--fs)*1.1)/1.55 var(--glyph);resize:none;white-space:pre-wrap;word-break:break-word}
+.screen textarea::placeholder,.out:empty::before{color:#7cf4ff88;content:attr(data-ph)}
+textarea::placeholder{content:none}
+.count{position:absolute;right:14px;bottom:8px;font-size:.8rem;color:#7cf4ffaa;z-index:2}
+.static{position:absolute;inset:0;opacity:0;pointer-events:none;z-index:3;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.logo{position:absolute;inset:0;display:grid;place-items:center;font-size:7rem;font-weight:700;color:var(--lemon);text-shadow:0 0 30px var(--lemon);opacity:0;pointer-events:none;z-index:4}
+.zap .static{animation:zs .5s steps(7)}.zap .logo{animation:zl .9s}
+@keyframes zs{0%{opacity:.95;background-position:0 0}50%{opacity:.7;background-position:60px 40px}100%{opacity:0;background-position:-30px 90px}}
+@keyframes zl{0%,15%{opacity:0;scale:.6}35%,60%{opacity:1;scale:1}100%{opacity:0;scale:1.2}}
+.mid{display:grid;justify-items:center;gap:6px;font-size:.95rem}
+.swap{width:72px;height:72px;border-radius:50%;border:4px solid var(--ink);background:var(--lemon);color:var(--ink);font-size:2rem;line-height:1;box-shadow:0 6px 0 #cdb25a;transition:rotate .4s}
+.swap:active{translate:0 4px;box-shadow:0 2px 0 #cdb25a}.swap.spin{rotate:180deg}
+.row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;margin-top:34px}
+.go{background:var(--pink);color:#fff;border:4px solid var(--ink);border-radius:60px;font-size:1.7rem;font-weight:700;padding:12px 44px;min-height:64px;box-shadow:0 8px 0 #b8547c;transition:translate .1s}
+.go:active{translate:0 6px;box-shadow:0 2px 0 #b8547c}.go[disabled]{opacity:.7}
+.ghost{background:#fff;color:var(--ink);border:3px solid #cfd6ea;border-radius:40px;padding:8px 22px;min-height:52px}
+#msg{text-align:center;min-height:1.6em;margin:14px 0 0;font-size:1.05rem;pointer-events:auto}#msg.bad{color:#b3262f}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;font-size:1rem}.chips b{width:100%;text-align:center;opacity:.85;font-weight:500}
+.chips button{background:#fff;color:var(--ink);border:2px solid #cfd6ea;border-radius:30px;padding:6px 16px;min-height:44px}
+@media(max-width:860px){.studio{grid-template-columns:1fr}.mid{grid-auto-flow:column;align-items:center}.guide{top:96px}}
+</style></head><body>
+<div id="bg" aria-hidden="true"></div>
+<main>
+ <header>
+  <div><h1>Lingo<em>TV</em></h1><p class="sub">Choose a channel on each TV, type your words, then press Translate. Tap a big letter in the background to zap to that language.</p></div>
+  <div class="tools" role="group" aria-label="Display options"><button id="sm" aria-label="Smaller text">A−</button><button id="lg" aria-label="Bigger text">A+</button></div>
+ </header>
+ <div class="studio" id="studio"></div>
+ <div class="row"><button class="go" id="go">Translate ▶</button><button class="ghost" id="copy">Copy</button><button class="ghost" id="clear">Clear</button></div>
+ <p id="msg" role="status" aria-live="polite"></p>
+ <div class="chips"><b>Try a phrase</b></div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+/* Light haptics: Android = Vibration API; iPhone (iOS 17.4+) = the native tick of a hidden switch. Desktop browsers have no web haptics. */
+const Hap=(()=>{let lab;
+ const ios=()=>{if(!lab){lab=document.createElement('label');lab.setAttribute('aria-hidden','true');lab.style.cssText='position:fixed;left:-99px;top:0;opacity:0;pointer-events:none';
+  const i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');lab.append(i);document.body.append(lab)}lab.click()};
+ return{tick(){try{navigator.vibrate?navigator.vibrate(12):ios()}catch(e){}}}})();
+let L=[],from='en',to='te',engine='';
+const AUTO={c:'auto',e:'Auto-detect',n:'Any language',g:'A'},INDIA=23;
+const find=c=>c==='auto'?AUTO:L.find(l=>l.c===c);
+const num=c=>c==='auto'?'CH 00':'CH '+String(L.findIndex(l=>l.c===c)+1).padStart(2,'0');
+const tvHTML=(id,cap,body)=>`<section class="tv" id="${id}" aria-label="${cap}"><div class="cap">${cap}</div><div class="bar"><button class="pick" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="${cap}: choose a language"><i class="num"></i><b class="badge g"></b><span class="nm"><b class="nat"></b><small class="eng"></small></span><u>▾</u></button><div class="ud"><button class="up" type="button" aria-label="Next channel">▲</button><button class="down" type="button" aria-label="Previous channel">▼</button></div></div><div class="guide" hidden><input class="find" type="search" placeholder="Search a language…" aria-label="Search languages"><div class="list" role="listbox"></div></div><div class="screen">${body}<div class="static"></div><div class="logo g"></div></div></section>`;
+const tvs=[];
+function Tv(id,withAuto,get,set){
+  const el=$('#'+id),pick=el.querySelector('.pick'),guide=el.querySelector('.guide'),q=guide.querySelector('input'),list=guide.querySelector('.list');
+  const items=()=>(withAuto?[AUTO]:[]).concat(L);
+  const api={paint(){const l=find(get());el.querySelector('.num').textContent=num(l.c);el.querySelector('.badge').textContent=l.g;el.querySelector('.nat').textContent=l.n;el.querySelector('.eng').textContent=l.e;},
+   close(){guide.hidden=true;pick.setAttribute('aria-expanded','false')}};
+  function zap(){el.classList.remove('zap');void el.offsetWidth;el.querySelector('.logo').textContent=find(get()).g;el.classList.add('zap')}
+  function choose(c){Hap.tick();set(c);api.paint();zap();api.close();hot();pick.focus()}
+  api.choose=choose;
+  function step(d){const a=items(),i=a.findIndex(l=>l.c===get());choose(a[(i+d+a.length)%a.length].c)}
+  function fill(t=''){list.innerHTML='';t=t.toLowerCase();let last=null;
+   items().filter(l=>!t||(l.e+' '+l.n).toLowerCase().includes(t)).forEach(l=>{
+    const i=L.indexOf(l),grp=i<0?'':i<INDIA?'India and neighbours':'World languages';
+    if(grp&&grp!==last){last=grp;const h=document.createElement('div');h.className='grp';h.textContent=grp;list.append(h)}
+    const b=document.createElement('button');b.type='button';b.className='ch'+(l.c===get()?' on':'');b.setAttribute('role','option');
+    b.innerHTML=`<i>${num(l.c).slice(3)}</i><b class="g">${l.g}</b><span>${l.n}<small>${l.e}</small></span>`;b.onclick=()=>choose(l.c);list.append(b)})}
+  function open(){tvs.forEach(t=>t.close());fill();q.value='';guide.hidden=false;pick.setAttribute('aria-expanded','true');q.focus();list.querySelector('.on')?.scrollIntoView({block:'center'})}
+  pick.onclick=()=>guide.hidden?open():api.close();
+  el.querySelector('.up').onclick=()=>step(1);el.querySelector('.down').onclick=()=>step(-1);
+  q.oninput=()=>fill(q.value);
+  guide.onkeydown=e=>{const b=[...list.querySelectorAll('.ch')],i=b.indexOf(document.activeElement);
+   if(e.key==='Escape'){api.close();pick.focus()}
+   else if(e.key==='ArrowDown'){e.preventDefault();(b[i+1]||b[0])?.focus()}
+   else if(e.key==='ArrowUp'){e.preventDefault();(i>0?b[i-1]:q).focus()}
+   else if(e.key==='Enter'&&document.activeElement===q&&b[0]){e.preventDefault();b[0].click()}};
+  tvs.push(api);return api;
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.tv'))tvs.forEach(t=>t.close())});
 
+function hot(){document.querySelectorAll('#bg span').forEach(s=>s.classList.toggle('hot',s.dataset.c===from||s.dataset.c===to))}
+function bg(){
+  const box=$('#bg');box.innerHTML='';const W=innerWidth,H=innerHeight,small=W<700;
+  const copies=small?1:2,all=[];for(let k=0;k<copies;k++)all.push(...L);
+  for(let i=all.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[all[i],all[j]]=[all[j],all[i]]}
+  const n=all.length,cols=Math.ceil(Math.sqrt(n*W/H)),rows=Math.ceil(n/cols);
+  all.forEach((l,i)=>{const s=document.createElement('span'),cx=i%cols,cy=i/cols|0;
+   s.textContent=l.g;s.dataset.c=l.c;s.title=l.e+' · '+l.n;
+   s.style.left=((cx+.15+Math.random()*.5)/cols*100)+'%';s.style.top=((cy+.1+Math.random()*.5)/rows*100)+'%';
+   s.style.fontSize=(small?30+Math.random()*30:44+Math.random()*60)+'px';
+   s.style.color=`hsl(${(L.indexOf(l)*47)%360} 42% 62%)`;
+   s.style.setProperty('--dx',(Math.random()*28-14)+'px');s.style.setProperty('--dy',(Math.random()*28-14)+'px');
+   s.style.setProperty('--r',(Math.random()*12-6)+'deg');s.style.setProperty('--d',(26+Math.random()*22)+'s');
+   s.onclick=()=>{toTv.choose(l.c)};box.append(s)});hot();
+}
+function loadFonts(){const fam=['Noto Sans','Noto Sans Devanagari','Noto Sans Bengali','Noto Sans Gurmukhi','Noto Sans Gujarati','Noto Sans Oriya','Noto Sans Tamil','Noto Sans Telugu','Noto Sans Kannada','Noto Sans Malayalam','Noto Sans Sinhala','Noto Sans Arabic','Noto Sans Hebrew','Noto Sans Thai','Noto Sans Lao','Noto Sans Khmer','Noto Sans Myanmar','Noto Sans Georgian','Noto Sans Armenian','Noto Sans Ethiopic','Noto Sans Meetei Mayek','Noto Sans JP','Noto Sans SC','Noto Sans TC','Noto Sans KR'];
+ const t=encodeURIComponent(L.map(l=>l.g+l.n+l.e).join('')+'0123456789');
+ fam.forEach(f=>{const k=document.createElement('link');k.rel='stylesheet';k.href='https://fonts.googleapis.com/css2?family='+f.replace(/ /g,'+')+':wght@700&text='+t+'&display=swap';document.head.append(k)})}
+
+let fromTv,toTv;const src=()=>$('#src'),out=()=>$('#out');
+function msg(t,bad){const m=$('#msg');m.textContent=t;m.className=bad?'bad':''}
+function reveal(t){const o=out();o.lang=to;o.textContent='';if(t.length>500){o.textContent=t;return}
+ let i=0;const id=setInterval(()=>{i+=2;o.textContent=t.slice(0,i);if(i>=t.length)clearInterval(id)},18)}
+async function go(text){
+  text=(text??src().value).trim();
+  if(!text){msg('Type or paste some words in the left TV first.',1);src().focus();return}
+  const b=$('#go');Hap.tick();b.disabled=true;b.textContent='Tuning in…';out().textContent='';msg('');
+  try{const r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,from,to})});
+   const d=await r.json();if(!r.ok)throw new Error(d.error||'Something went wrong. Please try again.');
+   reveal(d.translation);msg('Translated by '+d.engine+'.')}
+  catch(e){msg(e instanceof TypeError?'Cannot reach the translator. Check your internet connection.':e.message,1)}
+  finally{b.disabled=false;b.textContent='Translate ▶'}
+}
+async function init(){
+  $('#studio').innerHTML=
+   tvHTML('tvFrom','Translate from','<textarea id="src" dir="auto" maxlength="3000" placeholder="Type or paste your words here…" aria-label="Text to translate"></textarea><span class="count" id="cnt">0 / 3000</span>')+
+   `<div class="mid"><button class="swap" id="swap" aria-label="Swap the two languages">⇄</button><span>Swap</span></div>`+
+   tvHTML('tvTo','Translate to','<div id="out" class="out" dir="auto" data-ph="Your translation appears here." aria-live="polite"></div>');
+  try{const d=await (await fetch('/api/languages')).json();L=d.languages;engine=d.engine}catch(e){msg('Could not load the language list. Please refresh.',1);return}
+  fromTv=Tv('tvFrom',true,()=>from,c=>from=c);toTv=Tv('tvTo',false,()=>to,c=>to=c);
+  fromTv.paint();toTv.paint();bg();loadFonts();addEventListener('resize',bg);
+  $('#swap').onclick=()=>{Hap.tick();const b=$('#swap');b.classList.toggle('spin');const t=out().textContent;
+   const nf=to,nt=from==='auto'?'en':from;from=nf;to=nt;if(t){src().value=t;out().textContent=''}
+   fromTv.paint();toTv.paint();hot();$('#cnt').textContent=src().value.length+' / 3000'};
+  src().oninput=()=>$('#cnt').textContent=src().value.length+' / 3000';
+  src().onkeydown=e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))go()};
+  $('#go').onclick=()=>go();
+  $('#clear').onclick=()=>{src().value='';out().textContent='';$('#cnt').textContent='0 / 3000';msg('');src().focus()};
+  $('#copy').onclick=async()=>{const t=out().textContent;if(!t){msg('Nothing to copy yet. Translate something first.',1);return}
+   try{await navigator.clipboard.writeText(t);msg('Copied. Now paste it anywhere.')}catch(e){msg('Could not copy. Select the text and copy it by hand.',1)}};
+  ['Hello!','Thank you','Good morning','Where is the toilet?','How much is this?','I need help'].forEach(p=>{
+   const b=document.createElement('button');b.textContent=p;b.onclick=()=>{from='en';fromTv.paint();hot();src().value=p;$('#cnt').textContent=p.length+' / 3000';go(p)};$('.chips').append(b)});
+  const fs=()=>document.documentElement.style.setProperty('--fs',size+'rem');let size=+localStorage.fs||1.25;fs();
+  $('#sm').onclick=()=>{size=Math.max(1,size-.15);localStorage.fs=size;fs()};$('#lg').onclick=()=>{size=Math.min(1.9,size+.15);localStorage.fs=size;fs()};
+}
+init();
+</script></body></html>
